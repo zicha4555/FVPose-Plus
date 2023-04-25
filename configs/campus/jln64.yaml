@@ -1,0 +1,83 @@
+CUDNN:
+  BENCHMARK: true
+  DETERMINISTIC: false
+  ENABLED: true
+
+BACKBONE: 'resnet'
+MODEL: 'voxelpose'
+GPUS: '1'
+OUTPUT_DIR: 'output'
+LOG_DIR: 'log'
+WORKERS: 4
+PRINT_FREQ: 100
+
+DATASET:
+  COLOR_RGB: True
+  ROOT: "data/Campus"
+  TRAIN_DATASET: 'synthetic'
+  TRAIN_HEATMAP_SRC: 'gt'
+  TEST_DATASET: 'campus'
+  TEST_HEATMAP_SRC: 'pred'
+  ROOTIDX:
+    - 11
+    - 12
+  CAMERA_NUM: 3
+  ORI_IMAGE_WIDTH: 360
+  ORI_IMAGE_HEIGHT: 288
+
+SYNTHETIC:
+  CAMERA_FILE: 'calibration_campus.json'
+  POSE_FILE: '../panoptic_training_pose.pkl'
+  MAX_PEOPLE: 5
+  NUM_DATA: 10000
+  DATA_AUGMENTATION: true
+  
+NETWORK:
+  PRETRAINED_BACKBONE: ''
+  IMAGE_SIZE:
+  - 800
+  - 640
+  HEATMAP_SIZE:
+  - 200
+  - 160
+  NUM_JOINTS: 17
+  SIGMA: 4
+
+TRAIN:
+  BATCH_SIZE: 8
+  SHUFFLE: true
+  BEGIN_EPOCH: 0
+  END_EPOCH: 20
+  RESUME: false
+  OPTIMIZER: adam
+  LR: 0.0001
+
+TEST:
+  MODEL_FILE: 'model_best.pth.tar'
+  BATCH_SIZE: 16
+  
+CAPTURE_SPEC:
+  SPACE_SIZE:
+    - 12000.0
+    - 12000.0
+    - 2000.0
+  SPACE_CENTER:
+    - 3000.0
+    - 4500.0
+    - 1000.0
+  VOXELS_PER_AXIS:
+    - 80
+    - 80
+    - 20
+  MAX_PEOPLE: 5
+  MIN_SCORE: 0.1
+  
+INDIVIDUAL_SPEC:
+  SPACE_SIZE:
+    - 2000.0
+    - 2000.0
+    - 2000.0
+  VOXELS_PER_AXIS:
+    - 64
+    - 64
+    - 64

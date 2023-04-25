@@ -1,0 +1,84 @@
+CUDNN:
+  BENCHMARK: true
+  DETERMINISTIC: false
+  ENABLED: true
+
+BACKBONE: 'resnet'
+MODEL: 'voxelpose'
+DATA_DIR: ''
+GPUS: '1'
+OUTPUT_DIR: 'output'
+LOG_DIR: 'log'
+WORKERS: 4
+PRINT_FREQ: 100
+
+DATASET:
+  COLOR_RGB: true
+  ROOT: "data/Shelf"
+  TRAIN_DATASET: 'synthetic'
+  TRAIN_HEATMAP_SRC: 'gt'
+  TEST_DATASET: 'shelf'
+  TEST_HEATMAP_SRC: 'pred'
+  ROOTIDX:
+    - 11
+    - 12
+  CAMERA_NUM: 5
+  ORI_IMAGE_WIDTH: 1032
+  ORI_IMAGE_HEIGHT: 776
+
+SYNTHETIC:
+  CAMERA_FILE: 'calibration_shelf.json'
+  POSE_FILE: '../panoptic_training_pose.pkl'
+  MAX_PEOPLE: 10
+  NUM_DATA: 5000
+  DATA_AUGMENTATION: true
+  
+NETWORK:
+  PRETRAINED_BACKBONE: ''
+  IMAGE_SIZE:
+  - 800
+  - 608
+  HEATMAP_SIZE:
+  - 200
+  - 152
+  NUM_JOINTS: 17
+  SIGMA: 3
+
+TRAIN:
+  BATCH_SIZE: 8
+  SHUFFLE: true
+  BEGIN_EPOCH: 0
+  END_EPOCH: 20
+  RESUME: false
+  OPTIMIZER: adam
+  LR: 0.0001
+
+TEST:
+  MODEL_FILE: 'model_best.pth.tar'
+  BATCH_SIZE: 16
+
+CAPTURE_SPEC:
+  SPACE_SIZE:
+    - 8000.0
+    - 8000.0
+    - 2000.0
+  SPACE_CENTER:
+    - 450.0
+    - -320.0
+    - 800.0
+  VOXELS_PER_AXIS:
+    - 80
+    - 80
+    - 20
+  MAX_PEOPLE: 10
+  MIN_SCORE: 0.1
+  
+INDIVIDUAL_SPEC:
+  SPACE_SIZE:
+    - 2000.0
+    - 2000.0
+    - 2000.0
+  VOXELS_PER_AXIS:
+    - 64
+    - 64
+    - 64

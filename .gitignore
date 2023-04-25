@@ -1,0 +1,14 @@
+/README.md
+/SECURITY.md
+/CODE_OF_CONDUCT.md
+/LICENSE
+/assets
+/lib/core/__pycache__
+/lib/dataset/__pycache__
+/lib/models/__pycache__
+/lib/utils/__pycache__
+/run/__pycache__
+/log
+/models
+/output
+/.vscode
