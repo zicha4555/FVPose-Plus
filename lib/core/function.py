@@ -104,7 +104,7 @@ def train_3d(config, model, optimizer, loader, epoch, output_dir, writer_dict, d
                     loss_joint=losses_joint, memory=gpu_memory_usage)
             logger.info(msg)
 
-            prefix = '{}_{:08}'.format(os.path.join(output_dir, 'train'), i)
+            prefix = '{}_{:03}_{:07}'.format(os.path.join(output_dir, 'train'), epoch, i)
             save_debug_2d_images(config, meta, final_poses, poses, proposal_centers, prefix)
 
         if i % config.WRITER_FREQ == 0:
