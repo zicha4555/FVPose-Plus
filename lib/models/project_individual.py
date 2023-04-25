@@ -35,7 +35,7 @@ class ProjectLayer(nn.Module):
         self.sample_grids = {}
 
     def save_grid(self):
-        print("Save the 3D grid for feature sampling")
+        # print("Save the 3D grid for feature sampling")
         grid = self.compute_grid(self.ind_space_size, self.whole_space_center, self.voxels_per_axis, device=self.device)
         grid = grid.view(self.voxels_per_axis[0], self.voxels_per_axis[1], self.voxels_per_axis[2], 3)
         self.register_buffer('center_grid', torch.stack([grid[:, :, 0, :2].reshape(-1, 2), grid[:, 0, :, ::2].reshape(-1, 2), \
@@ -103,7 +103,7 @@ class ProjectLayer(nn.Module):
 
         curr_seq = meta['seq'][index]
         if curr_seq not in self.sample_grids:
-            print("Save the sampling grid in JLN for sequence", curr_seq)
+            # print("Save the sampling grid in JLN for sequence", curr_seq)
             sample_grids = self.compute_sample_grid(heatmaps, meta, index, self.fine_voxels_per_axis, cameras, resize_transform)
             self.sample_grids[curr_seq] = sample_grids.to(self.device)
         else: 

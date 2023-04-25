@@ -74,7 +74,7 @@ class ProjectLayer(nn.Module):
             assert curr_seq in cameras.keys(), "missing camera parameters for the current sequence"
             assert len(cameras[curr_seq]) == n, "inconsistent number of cameras"
             if curr_seq not in self.sample_grids:
-                print("Save the sampling grid in HDN for sequence", curr_seq)
+                # print("Save the sampling grid in HDN for sequence", curr_seq)
                 sample_grids = torch.zeros(n, 1, nbins, 2, device=device)
                 for c in range(n):
                     sample_grids[c] = self.project_grid(cameras[curr_seq][c], w, h, nbins, resize_transform, device).squeeze(0)
