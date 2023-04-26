@@ -70,6 +70,7 @@ def get_data_loaders(config):
         batch_size=config.TRAIN.BATCH_SIZE * ngpus,
         shuffle=config.TRAIN.SHUFFLE,
         num_workers=config.WORKERS,
+        drop_last=True,  # for multi-GPUs training
         pin_memory=True)
 
     test_dataset = eval('dataset.' + config.DATASET.TEST_DATASET)(
