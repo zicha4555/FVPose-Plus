@@ -46,9 +46,7 @@ def train_3d(config, model, optimizer, loader, epoch, output_dir, writer_dict, d
             final_poses, poses, proposal_centers, loss_dict, _ = model(meta=meta, targets=targets, input_heatmaps=input_heatmap,\
                                                                        cameras=cameras, resize_transform=resize_transform)
 
-        # Correct dimension of tensor concatenation
-        if len(model.device_ids) > 1:
-            poses = torch.cat(torch.split(poses, split_size_or_sections=3, dim=0), dim=1)
+        
 
         loss = loss_dict["total"].mean()
         loss_2d = loss_dict["2d_heatmaps"].mean()
@@ -104,6 +102,10 @@ def train_3d(config, model, optimizer, loader, epoch, output_dir, writer_dict, d
                     loss_joint=losses_joint, memory=gpu_memory_usage)
             logger.info(msg)
 
+            # Correct dimension of tensor concatenation
+            if len(model.device_ids) > 1:
+                poses = torch.cat(torch.split(poses, split_size_or_sections=3, dim=0), dim=1)
+
             prefix = '{}_{:03}_{:07}'.format(os.path.join(output_dir, 'train'), epoch, i)
             save_debug_2d_images(config, meta, final_poses, poses, proposal_centers, prefix)
 
@@ -157,6 +159,10 @@ def validate_3d(config, model, loader, output_dir, has_evaluate_function=False, 
                         speed=len(inputs) * inputs[0].size(0) / batch_time.val,
                         data_time=data_time, memory=gpu_memory_usage)
                 logger.info(msg)
+
+                # Correct dimension of tensor concatenation
+                if len(model.device_ids) > 1:
+                    poses = torch.cat(torch.split(poses, split_size_or_sections=3, dim=0), dim=1)
 
                 prefix = '{}_{:08}'.format(os.path.join(output_dir, 'validation'), i)
                 save_debug_2d_images(config, meta, final_poses, poses, proposal_centers, prefix)
