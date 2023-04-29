@@ -140,7 +140,7 @@ def main():
 
         best_model = True
         if test_loader != None and test_dataset.has_evaluate_function:
-            precision = validate_3d(config, model, test_loader, final_output_dir,\
+            precision = validate_3d(config, model, test_loader, final_output_dir, epoch,\
                                     test_dataset.has_evaluate_function)
 
             if precision >= best_precision:

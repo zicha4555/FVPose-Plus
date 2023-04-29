@@ -39,7 +39,7 @@ class ProjectLayer(nn.Module):
         grid = self.compute_grid(self.ind_space_size, self.whole_space_center, self.voxels_per_axis, device=self.device)
         grid = grid.view(self.voxels_per_axis[0], self.voxels_per_axis[1], self.voxels_per_axis[2], 3)
         self.register_buffer('center_grid', torch.stack([grid[:, :, 0, :2].reshape(-1, 2), grid[:, 0, :, ::2].reshape(-1, 2), \
-                                        grid[0, :, :, 1:].reshape(-1, 2)]))
+                                        grid[0, :, :, 1:].reshape(-1, 2)]))  # 2D girds in xy, xz, yz planes
         self.register_buffer('fine_grid', self.compute_grid(self.whole_space_size, self.whole_space_center, self.fine_voxels_per_axis, device=self.device))
         return
 

@@ -66,16 +66,16 @@ class WeightNet(nn.Module):
         )
 
     def forward(self, x):
-        # x: [3, num_people, num_channels, height, width]
+        # x: [3, num_people, num_joints, height, width]
         x = torch.flatten(x, 0, 1)
         batch_size = x.shape[0]
         num_joints = self.num_joints
         x = x.view(batch_size * num_joints, 1, self.voxels_per_axis[0], self.voxels_per_axis[1])
-        
+        # x: [3*num_people*num_joints, 1, height, width]  Treat features of all people, planes and joints equally.
         x = self.heatmap_feature_net(x)
-        x = F.adaptive_avg_pool2d(x, 1)
-        x = x.view(batch_size * num_joints, -1)
-        x = self.output(x)
+        x = F.adaptive_avg_pool2d(x, 1)  # x: [3*num_people*num_joints, 64, 1, 1] global average pooling.
+        x = x.view(batch_size * num_joints, -1)  # x: [3*num_people*num_joints, 64]
+        x = self.output(x)  # x: [3*num_people*num_joints, 1] MLP
         x = x.view(batch_size, num_joints, 1)
         return x
 

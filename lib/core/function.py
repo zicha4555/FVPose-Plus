@@ -120,7 +120,7 @@ def train_3d(config, model, optimizer, loader, epoch, output_dir, writer_dict, d
             writer_dict['train_global_steps'] = global_steps + 1
    
 
-def validate_3d(config, model, loader, output_dir, has_evaluate_function=False, device=torch.device('cuda')):
+def validate_3d(config, model, loader, output_dir, epoch, has_evaluate_function=False, device=torch.device('cuda')):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     model.eval()
@@ -164,7 +164,7 @@ def validate_3d(config, model, loader, output_dir, has_evaluate_function=False, 
                 if len(model.device_ids) > 1:
                     poses = torch.cat(torch.split(poses, split_size_or_sections=3, dim=0), dim=1)
 
-                prefix = '{}_{:08}'.format(os.path.join(output_dir, 'validation'), i)
+                prefix = '{}_{:03}_{:07}'.format(os.path.join(output_dir, 'validation'), epoch, i)
                 save_debug_2d_images(config, meta, final_poses, poses, proposal_centers, prefix)
     
     if not has_evaluate_function:

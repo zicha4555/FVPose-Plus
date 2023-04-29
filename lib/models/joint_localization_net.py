@@ -18,25 +18,25 @@ class SoftArgmaxLayer(nn.Module):
         self.beta = cfg.NETWORK.BETA
 
     def forward(self, x, grids):
-        batch_size = x.size(1)
+        num_people = x.size(1)  # x:[3, n, 15, 64, 64]; grids:[3, 4096, 2]
         channel = x.size(2)
-        x = x.reshape(3, batch_size, channel, -1, 1)
+        x = x.reshape(3, num_people, channel, -1, 1)  # x:[3, n, 15, 4096, 1]
         x = F.softmax(self.beta * x, dim=3)
 
         # confidence score: averaged max values in the joint feature map
-        confs, _ = torch.max(x, dim=3)
-        confs = torch.mean(confs.squeeze(3), dim=(0, 2))
+        confs, _ = torch.max(x, dim=3)  # [3, n, 15, 1]
+        confs = torch.mean(confs.squeeze(3), dim=(0, 2))  # confs([n]) represent the mean confs of a person through out all planes and joints
 
         grids = grids.reshape(3, 1, 1, -1, 2) 
-        x = torch.mul(x, grids)
-        x = torch.sum(x, dim=3)
+        x = torch.mul(x, grids)  # [3, n, 15, 4096, 2]
+        x = torch.sum(x, dim=3)  # x([3, n, 15, 2]): The actual coordinates are obtained by weighting the grid coordinates with the heatmap.
         return x, confs
 
 
 class JointLocalizationNet(nn.Module):
     def __init__(self, cfg):
         super(JointLocalizationNet, self).__init__()
-        self.conv_net = P2PNet(cfg.NETWORK.NUM_JOINTS, cfg.NETWORK.NUM_JOINTS)
+        self.p2p_net = P2PNet(cfg.NETWORK.NUM_JOINTS, cfg.NETWORK.NUM_JOINTS)
         self.weight_net = WeightNet(cfg)
         self.project_layer = ProjectLayer(cfg)
         self.soft_argmax_layer = SoftArgmaxLayer(cfg)
@@ -78,8 +78,8 @@ class JointLocalizationNet(nn.Module):
             
             # project to orthogonal planes and extract joint features
             input = torch.cat([torch.max(cubes, dim=4)[0], torch.max(cubes, dim=3)[0], 
-                               torch.max(cubes, dim=2)[0]])
-            joint_features = torch.stack(torch.chunk(self.conv_net(input), 3), dim=0)
+                               torch.max(cubes, dim=2)[0]])  # [3*n, 15, 64, 64]. 'n' is the number of people.
+            joint_features = torch.stack(torch.chunk(self.p2p_net(input), 3), dim=0)  # [3, n, 15, 64, 64]
             
             pose_preds, confs = self.soft_argmax_layer(joint_features, self.project_layer.center_grid)
 

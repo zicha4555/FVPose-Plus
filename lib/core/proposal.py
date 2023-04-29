@@ -26,7 +26,7 @@ def max_pool2D(inputs, kernel=3):
 
 def nms2D(prob_map, max_num):
     batch_size = prob_map.shape[0]
-    prob_map_nms = max_pool2D(prob_map)
+    prob_map_nms = max_pool2D(prob_map)  # just keep the maximum value in every 3*3 area, to prevent adjacent high score value from being detected by topk().
     prob_map_nms_reshape = prob_map_nms.reshape(batch_size, -1)
     topk_values, topk_flatten_index = prob_map_nms_reshape.topk(max_num)
     topk_index = get_index2D(topk_flatten_index, prob_map[0].shape)

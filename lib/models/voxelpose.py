@@ -22,8 +22,8 @@ class VoxelPoseNet(nn.Module):
         self.num_joints = cfg.NETWORK.NUM_JOINTS
        
         self.backbone = backbone
-        self.pose_net = HumanDetectionNet(cfg)
-        self.joint_net = JointLocalizationNet(cfg)
+        self.HDN = HumanDetectionNet(cfg)
+        self.JLN = JointLocalizationNet(cfg)
 
     def forward(self, views=None, meta=None, targets=None, input_heatmaps=None, cameras=None, resize_transform=None):
         # views: [batch_size, num_views, num_channels, height, width]
@@ -35,11 +35,11 @@ class VoxelPoseNet(nn.Module):
  
         # human detection network
         proposal_heatmaps_2d, proposal_heatmaps_1d, proposal_centers, \
-                              bbox_preds = self.pose_net(input_heatmaps, meta, cameras, resize_transform)
+                              bbox_preds = self.HDN(input_heatmaps, meta, cameras, resize_transform)
         mask = (proposal_centers[:, :, 3] >= 0)
 
         # joint localization network
-        fused_poses, poses = self.joint_net(meta, input_heatmaps, proposal_centers.detach(), mask, cameras, resize_transform)
+        fused_poses, poses = self.JLN(meta, input_heatmaps, proposal_centers.detach(), mask, cameras, resize_transform)
 
         # compute the training loss
         if self.training:
