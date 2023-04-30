@@ -6,7 +6,7 @@
 import torch
 import torch.nn as nn
 
-from models.cnns_2d import CenterNet
+from models.cnns_2d import CenterNeXt
 from models.cnns_1d import C2CNet
 from models.project_whole import ProjectLayer
 from core.proposal import nms2D
@@ -69,7 +69,7 @@ class HumanDetectionNet(nn.Module):
         super(HumanDetectionNet, self).__init__()
         self.max_people = cfg.CAPTURE_SPEC.MAX_PEOPLE
         self.project_layer = ProjectLayer(cfg)
-        self.center_net = CenterNet(cfg.NETWORK.NUM_JOINTS, 1)
+        self.center_net = CenterNeXt(cfg.NETWORK.NUM_JOINTS)
         self.c2c_net = C2CNet(cfg.NETWORK.NUM_JOINTS, 1)
         self.proposal_layer = ProposalLayer(cfg)
         

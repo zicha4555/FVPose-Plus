@@ -38,6 +38,7 @@ def parse_args():
 
 def get_optimizer(model):
     lr = config.TRAIN.LR
+    weight_decay = config.TRAIN.WEIGHT_DECAY
     if model.module.backbone is not None:
         for params in model.module.backbone.parameters():
             # Set to True If you want to train the whole model.
@@ -47,8 +48,8 @@ def get_optimizer(model):
         params.requires_grad = True
     for params in model.module.JLN.parameters():
         params.requires_grad = True
-    optimizer = optim.Adam(
-        filter(lambda p: p.requires_grad, model.module.parameters()), lr=lr)
+    optimizer = optim.AdamW(
+        filter(lambda p: p.requires_grad, model.module.parameters()), lr=lr, weight_decay=weight_decay)
 
     return model, optimizer
 

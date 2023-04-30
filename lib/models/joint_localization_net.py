@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from models.cnns_2d import P2PNet
+from models.cnns_2d import P2PNeXt
 from models.weight_net import WeightNet
 from models.project_individual import ProjectLayer
 
@@ -36,7 +36,7 @@ class SoftArgmaxLayer(nn.Module):
 class JointLocalizationNet(nn.Module):
     def __init__(self, cfg):
         super(JointLocalizationNet, self).__init__()
-        self.p2p_net = P2PNet(cfg.NETWORK.NUM_JOINTS, cfg.NETWORK.NUM_JOINTS)
+        self.p2p_net = P2PNeXt(cfg.NETWORK.NUM_JOINTS)
         self.weight_net = WeightNet(cfg)
         self.project_layer = ProjectLayer(cfg)
         self.soft_argmax_layer = SoftArgmaxLayer(cfg)

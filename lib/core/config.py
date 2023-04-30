@@ -126,6 +126,7 @@ config.TRAIN.END_EPOCH = 140
 config.TRAIN.RESUME = False
 config.TRAIN.BATCH_SIZE = 8
 config.TRAIN.SHUFFLE = True
+config.TRAIN.WEIGHT_DECAY = 0.01
 
 # testing
 config.TEST = edict()
