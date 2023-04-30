@@ -43,9 +43,9 @@ def get_optimizer(model):
             # Set to True If you want to train the whole model.
             params.requires_grad = False
 
-    for params in model.module.pose_net.parameters():
+    for params in model.module.HDN.parameters():
         params.requires_grad = True
-    for params in model.module.joint_net.parameters():
+    for params in model.module.JLN.parameters():
         params.requires_grad = True
     optimizer = optim.Adam(
         filter(lambda p: p.requires_grad, model.module.parameters()), lr=lr)
