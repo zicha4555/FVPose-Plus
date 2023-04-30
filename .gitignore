@@ -8,6 +8,7 @@
 /lib/models/__pycache__
 /lib/utils/__pycache__
 /run/__pycache__
+/data
 /log
 /models
 /output
