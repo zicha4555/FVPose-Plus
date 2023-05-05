@@ -49,14 +49,17 @@ class Res2DBlock(nn.Module):
         skip = self.skip_con(x)  # skip connection
         return F.relu(res + skip, True)
 
-    
+
 class Pool2DBlock(nn.Module):
-    def __init__(self, pool_size):
-        super(Pool2DBlock, self).__init__()
-        self.pool_size = pool_size
-    
+    def __init__(self, in_planes, out_planes) -> None:
+        super().__init__()
+        self.downsample_layer = nn.Sequential(
+                    LayerNorm(in_planes, eps=1e-6, data_format="channels_first"),
+                    nn.Conv2d(in_planes, out_planes, kernel_size=2, stride=2),
+            )
+        
     def forward(self, x):
-        return F.max_pool2d(x, kernel_size=self.pool_size, stride=self.pool_size)
+        return self.downsample_layer(x)
     
 
 class Upsample2DBlock(nn.Module):
@@ -75,23 +78,23 @@ class Upsample2DBlock(nn.Module):
 
 
 class EncoderDecoder(nn.Module):
-    def __init__(self):
+    def __init__(self, dims=[48, 96, 192]):
         super(EncoderDecoder, self).__init__()
 
-        self.encoder_pool1 = Pool2DBlock(2)
-        self.encoder_res1 = Res2DBlock(32, 64)
-        self.encoder_pool2 = Pool2DBlock(2)
-        self.encoder_res2 = Res2DBlock(64, 128)
+        self.encoder_pool1 = Pool2DBlock(dims[0], dims[1])
+        self.encoder_res1 = ConvNeXtBlock(dims[1])
+        self.encoder_pool2 = Pool2DBlock(dims[1], dims[2])
+        self.encoder_res2 = ConvNeXtBlock(dims[2])
 
-        self.mid_res = Res2DBlock(128, 128)
+        self.mid_res = ConvNeXtBlock(dims[2])
 
-        self.decoder_res2 = Res2DBlock(128, 128)
-        self.decoder_upsample2 = Upsample2DBlock(128, 64, 2, 2)
-        self.decoder_res1 = Res2DBlock(64, 64)
-        self.decoder_upsample1 = Upsample2DBlock(64, 32, 2, 2)
+        self.decoder_res2 = ConvNeXtBlock(dims[2])
+        self.decoder_upsample2 = Upsample2DBlock(dims[2], dims[1], 2, 2)
+        self.decoder_res1 = ConvNeXtBlock(dims[1])
+        self.decoder_upsample1 = Upsample2DBlock(dims[1], dims[0], 2, 2)
 
-        self.skip_res1 = Res2DBlock(32, 32)
-        self.skip_res2 = Res2DBlock(64, 64)
+        self.skip_res1 = ConvNeXtBlock(dims[0])
+        self.skip_res2 = ConvNeXtBlock(dims[1])
 
     def forward(self, x):
         skip_x1 = self.skip_res1(x)
@@ -116,18 +119,18 @@ class EncoderDecoder(nn.Module):
 
 
 class P2PNet(nn.Module):
-    def __init__(self, input_channels, output_channels):
+    def __init__(self, input_channels, output_channels, dims=[48, 96, 192]):
         super(P2PNet, self).__init__()
         self.output_channels = output_channels
 
         self.front_layers = nn.Sequential(
-            Basic2DBlock(input_channels, 16, 7),
-            Res2DBlock(16, 32),
+            Basic2DBlock(input_channels, dims[0]//2, 7),
+            Res2DBlock(dims[0]//2, dims[0]),
         )
 
-        self.encoder_decoder = EncoderDecoder()
+        self.encoder_decoder = EncoderDecoder(dims=[48, 96, 192])
 
-        self.output_layer = nn.Conv2d(32, output_channels, kernel_size=1, stride=1, padding=0)
+        self.output_layer = nn.Conv2d(dims[0], output_channels, kernel_size=1, stride=1, padding=0)
 
         self._initialize_weights()
 
@@ -179,25 +182,25 @@ class P2PNeXt(nn.Module):
 
 
 class CenterNet(nn.Module):
-    def __init__(self, input_channels, output_channels, head_conv=32):
+    def __init__(self, input_channels, output_channels, head_conv=48, dims=[48, 96, 192]):
         super(CenterNet, self).__init__()
         self.output_channels = output_channels
 
         self.front_layers = nn.Sequential(
-            Basic2DBlock(input_channels, 16, 7),
-            Res2DBlock(16, 32),
+            Basic2DBlock(input_channels, dims[0]//2, 7),
+            Res2DBlock(dims[0]//2, dims[0]),
         )
 
         self.encoder_decoder = EncoderDecoder()
 
         self.output_hm = nn.Sequential(
-            nn.Conv2d(32, head_conv, kernel_size=3, padding=1),
+            nn.Conv2d(dims[0], head_conv, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(head_conv, output_channels, kernel_size=1, padding=0)
         )
 
         self.output_size = nn.Sequential(
-            nn.Conv2d(32, head_conv, kernel_size=3, padding=1, bias=True),
+            nn.Conv2d(dims[0], head_conv, kernel_size=3, padding=1, bias=True),
             nn.ReLU(inplace=True),
             nn.Conv2d(head_conv, 2, kernel_size=1, padding=0, bias=True)
         )
