@@ -74,9 +74,9 @@ class Upsample2DBlock(nn.Module):
         return self.block(x)
 
 
-class EncoderDecorder(nn.Module):
+class EncoderDecoder(nn.Module):
     def __init__(self):
-        super(EncoderDecorder, self).__init__()
+        super(EncoderDecoder, self).__init__()
 
         self.encoder_pool1 = Pool2DBlock(2)
         self.encoder_res1 = Res2DBlock(32, 64)
@@ -125,7 +125,7 @@ class P2PNet(nn.Module):
             Res2DBlock(16, 32),
         )
 
-        self.encoder_decoder = EncoderDecorder()
+        self.encoder_decoder = EncoderDecoder()
 
         self.output_layer = nn.Conv2d(32, output_channels, kernel_size=1, stride=1, padding=0)
 
@@ -188,7 +188,7 @@ class CenterNet(nn.Module):
             Res2DBlock(16, 32),
         )
 
-        self.encoder_decoder = EncoderDecorder()
+        self.encoder_decoder = EncoderDecoder()
 
         self.output_hm = nn.Sequential(
             nn.Conv2d(32, head_conv, kernel_size=3, padding=1),
