@@ -36,7 +36,7 @@ class SoftArgmaxLayer(nn.Module):
 class JointLocalizationNet(nn.Module):
     def __init__(self, cfg):
         super(JointLocalizationNet, self).__init__()
-        self.p2p_net = P2PNet(cfg.NETWORK.NUM_JOINTS)
+        self.p2p_net = P2PNet(cfg.NETWORK.NUM_JOINTS, cfg.NETWORK.NUM_JOINTS)
         self.weight_net = WeightNet(cfg)
         self.project_layer = ProjectLayer(cfg)
         self.soft_argmax_layer = SoftArgmaxLayer(cfg)

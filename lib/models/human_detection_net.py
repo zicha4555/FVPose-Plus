@@ -69,7 +69,7 @@ class HumanDetectionNet(nn.Module):
         super(HumanDetectionNet, self).__init__()
         self.max_people = cfg.CAPTURE_SPEC.MAX_PEOPLE
         self.project_layer = ProjectLayer(cfg)
-        self.center_net = CenterNet(cfg.NETWORK.NUM_JOINTS)
+        self.center_net = CenterNet(cfg.NETWORK.NUM_JOINTS, 1)
         self.c2c_net = C2CNet(cfg.NETWORK.NUM_JOINTS, 1)
         self.proposal_layer = ProposalLayer(cfg)
         
