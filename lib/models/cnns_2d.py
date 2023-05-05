@@ -148,7 +148,7 @@ class P2PNet(nn.Module):
 
 
 class P2PNeXt(nn.Module):
-    def __init__(self, channels=15, depths=[1, 1, 1, 1], dims=[32, 64, 128, 256], 
+    def __init__(self, channels=15, depths=[1, 1, 3, 1], dims=[48, 96, 192, 384], 
                  drop_path_rate=0., layer_scale_init_value=1e-6):
         super().__init__()
         self.encoder_decoder = EncoderDecoderConvNeXt(channels, 
@@ -222,7 +222,7 @@ class CenterNet(nn.Module):
 
 
 class CenterNeXt(nn.Module):
-    def __init__(self, input_channels=15, depths=[1, 1, 1, 1], dims=[32, 64, 128, 256], 
+    def __init__(self, input_channels=15, depths=[1, 1, 3, 1], dims=[48, 96, 192, 384], 
                  drop_path_rate=0., layer_scale_init_value=1e-6):
         super().__init__()
         self.encoder_decoder = EncoderDecoderConvNeXt(input_channels, 

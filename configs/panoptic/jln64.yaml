@@ -15,7 +15,7 @@ WRITER_FREQ: 1
 
 DATASET:
   COLOR_RGB: True
-  ROOT: "../Faster-VoxelPose/data/Panoptic"
+  ROOT: "./data/Panoptic"
   TRAIN_DATASET: 'panoptic'
   TRAIN_HEATMAP_SRC: 'image'
   TEST_DATASET: 'panoptic'
@@ -37,7 +37,7 @@ NETWORK:
   SIGMA: 3
 
 TRAIN:
-  BATCH_SIZE: 2
+  BATCH_SIZE: 4
   SHUFFLE: true
   BEGIN_EPOCH: 0
   END_EPOCH: 20
