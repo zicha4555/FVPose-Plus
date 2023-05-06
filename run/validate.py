@@ -87,7 +87,7 @@ def main():
 
     with torch.no_grad():
         all_final_poses = []
-        for i, (inputs, _, meta, input_heatmap) in enumerate(tqdm(test_loader)):
+        for i, (inputs, _, meta, input_heatmap) in enumerate(tqdm(test_loader, ncols=100)):
             if config.DATASET.TRAIN_HEATMAP_SRC == 'image':
                 final_poses, poses, proposal_centers, _, input_heatmap = model(views=inputs, meta=meta, cameras=cameras, resize_transform=resize_transform)
             else:
@@ -97,8 +97,8 @@ def main():
             for b in range(final_poses.shape[0]):
                 all_final_poses.append(final_poses[b])
 
-            prefix = '{}_{:08}'.format(os.path.join(final_output_dir, 'validation'), i)
-            save_debug_2d_images(config, meta[0], final_poses, poses, proposal_centers, prefix)
+            # prefix = '{}_{:07}'.format(os.path.join(final_output_dir, 'validate'), i)
+            # save_debug_2d_images(config, meta, final_poses, poses, proposal_centers, prefix)
 
     if test_dataset.has_evaluate_function:
         metric, msg = test_loader.dataset.evaluate(all_final_poses)
