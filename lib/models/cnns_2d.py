@@ -119,7 +119,7 @@ class EncoderDecoder(nn.Module):
 
 
 class P2PNet(nn.Module):
-    def __init__(self, input_channels, output_channels, dims=[48, 96, 192]):
+    def __init__(self, input_channels, output_channels, dims=[64, 128, 256]):
         super(P2PNet, self).__init__()
         self.output_channels = output_channels
 
@@ -128,7 +128,7 @@ class P2PNet(nn.Module):
             Res2DBlock(dims[0]//2, dims[0]),
         )
 
-        self.encoder_decoder = EncoderDecoder(dims=[48, 96, 192])
+        self.encoder_decoder = EncoderDecoder(dims=dims)
 
         self.output_layer = nn.Conv2d(dims[0], output_channels, kernel_size=1, stride=1, padding=0)
 
@@ -182,7 +182,7 @@ class P2PNeXt(nn.Module):
 
 
 class CenterNet(nn.Module):
-    def __init__(self, input_channels, output_channels, head_conv=48, dims=[48, 96, 192]):
+    def __init__(self, input_channels, output_channels, head_conv=48, dims=[64, 128, 256]):
         super(CenterNet, self).__init__()
         self.output_channels = output_channels
 
@@ -191,7 +191,7 @@ class CenterNet(nn.Module):
             Res2DBlock(dims[0]//2, dims[0]),
         )
 
-        self.encoder_decoder = EncoderDecoder()
+        self.encoder_decoder = EncoderDecoder(dims=dims)
 
         self.output_hm = nn.Sequential(
             nn.Conv2d(dims[0], head_conv, kernel_size=3, padding=1),
